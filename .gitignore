@@ -1,22 +1,32 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
+# Gradle specific files
+.gradle/
+.kotlin/
+build/
 
-# idea
-out
-*.ipr
-*.iws
-*.iml
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Server files
+run/
+
+# Dokka generated documentation (committed for GitHub Pages)
+docs/
+
+# IDE specific files
 .idea
+.vscode
+.zed
+copilot.*.xml
+workspace.xml
+modules.xml
 
-# gradle
-build
-.gradle
-
-# other
-eclipse
-run
+#AI
+.claude/
