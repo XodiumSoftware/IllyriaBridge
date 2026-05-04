@@ -1,10 +1,10 @@
-package org.xodium.illyriaplus
+package org.xodium.illyriabridge
 
 import org.bukkit.plugin.java.JavaPlugin
-import org.xodium.illyriaplus.managers.RecipeManager
+import org.xodium.illyriabridge.managers.RecipeManager
 
 /** Main class of the plugin. */
-internal class IllyriaBridge : JavaPlugin() {
+class IllyriaBridge : JavaPlugin() {
     companion object {
         lateinit var instance: IllyriaBridge
             private set

@@ -1,4 +1,4 @@
-package org.xodium.illyriaplus.payloads
+package org.xodium.illyriabridge.payloads
 
 import com.mojang.serialization.Codec
 import net.minecraft.core.registries.BuiltInRegistries

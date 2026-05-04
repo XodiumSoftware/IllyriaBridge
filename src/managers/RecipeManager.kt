@@ -1,4 +1,4 @@
-package org.xodium.illyriaplus.managers
+package org.xodium.illyriabridge.managers
 
 import io.netty.buffer.Unpooled
 import net.minecraft.core.registries.BuiltInRegistries
@@ -14,7 +14,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.xodium.illyriaplus.payloads.FabricRecipeSyncPayload
+import org.xodium.illyriabridge.payloads.FabricRecipeSyncPayload
 
 /**
  * Manages recipe synchronization for Fabric clients connecting to the server.
