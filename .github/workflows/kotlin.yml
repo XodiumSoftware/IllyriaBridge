@@ -87,7 +87,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: IllyriaPlus
+          name: IllyriaBridge
           path: build/libs/*.jar
 
   nightly_release:
