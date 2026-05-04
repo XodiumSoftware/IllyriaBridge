@@ -47,7 +47,7 @@ internal data class FabricRecipeSyncPayload(
                 buf.writeResourceKey(recipe.id())
 
                 @Suppress("UNCHECKED_CAST")
-                val codec = this.serializer.codec() as Codec<Any>
+                val codec = this.serializer.codec().codec() as Codec<Any>
 
                 buf.writeJsonWithCodec(codec, recipe.value())
             }
@@ -81,9 +81,7 @@ internal data class FabricRecipeSyncPayload(
 
                 repeat(count) {
                     val id = buf.readResourceKey(Registries.RECIPE)
-
-                    @Suppress("UNCHECKED_CAST")
-                    val recipe = buf.readLenientJsonWithCodec(recipeSerializer.codec() as Codec<*>)
+                    val recipe = buf.readLenientJsonWithCodec(recipeSerializer.codec().codec())
 
                     recipes.add(RecipeHolder(id, recipe as Recipe<*>))
                 }

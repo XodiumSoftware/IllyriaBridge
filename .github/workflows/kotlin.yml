@@ -110,7 +110,7 @@ jobs:
         name: Download Artifact
         uses: actions/download-artifact@v8.0.1
         with:
-          name: IllyriaPlus
+          name: IllyriaBridge
           path: dist/
 
       - id: update_nightly_tag
