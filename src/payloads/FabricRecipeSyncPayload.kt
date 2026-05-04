@@ -1,6 +1,5 @@
 package org.xodium.illyriabridge.payloads
 
-import com.mojang.serialization.Codec
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -15,7 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 
 /**
  * Payload for synchronizing recipes with Fabric clients.
- * Groups recipes by their serializer type for efficient network transmission.
+ * Matches Fabric API's ClientboundRecipeSyncPayload format exactly.
  *
  * @property entries List of recipe entries grouped by serializer
  */
@@ -34,40 +33,14 @@ internal data class FabricRecipeSyncPayload(
         val serializer: RecipeSerializer<*>,
         val recipes: List<RecipeHolder<*>>,
     ) {
-        /**
-         * Writes this entry to the provided buffer.
-         *
-         * @param buf The buffer to write to
-         */
-        private fun write(buf: RegistryFriendlyByteBuf) {
-            buf.writeIdentifier(BuiltInRegistries.RECIPE_SERIALIZER.getKey(this.serializer)!!)
-            buf.writeVarInt(this.recipes.size)
-
-            for (recipe in this.recipes) {
-                buf.writeResourceKey(recipe.id())
-
-                @Suppress("UNCHECKED_CAST")
-                val streamCodec =
-                    ByteBufCodecs.fromCodecWithRegistries(this.serializer.codec().codec() as Codec<Recipe<*>>)
-                streamCodec.encode(buf, recipe.value())
-            }
-        }
-
         companion object {
             /** Stream codec for encoding/decoding Entry instances */
             val CODEC: StreamCodec<RegistryFriendlyByteBuf, Entry> =
                 StreamCodec.ofMember(
-                    { entry, buf -> entry.write(buf) },
-                    { buf -> read(buf) },
+                    Entry::write,
+                    Entry::read,
                 )
 
-            /**
-             * Reads an Entry from the provided buffer.
-             *
-             * @param buf The buffer to read from
-             * @return The decoded Entry
-             * @throws SkipPacketDecoderException if the recipe serializer is not found
-             */
             private fun read(buf: RegistryFriendlyByteBuf): Entry {
                 val recipeSerializerId = buf.readIdentifier()
                 val recipeSerializer =
@@ -82,15 +55,27 @@ internal data class FabricRecipeSyncPayload(
                 repeat(count) {
                     val id = buf.readResourceKey(Registries.RECIPE)
 
-                    @Suppress("UNCHECKED_CAST")
-                    val streamCodec =
-                        ByteBufCodecs.fromCodecWithRegistries(recipeSerializer.codec().codec() as Codec<Recipe<*>>)
-                    val recipe = streamCodec.decode(buf)
+                    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+                    val recipe =
+                        (recipeSerializer.streamCodec() as StreamCodec<RegistryFriendlyByteBuf, Recipe<*>>).decode(buf)
 
                     recipes.add(RecipeHolder(id, recipe))
                 }
 
                 return Entry(recipeSerializer, recipes)
+            }
+        }
+
+        private fun write(buf: RegistryFriendlyByteBuf) {
+            buf.writeIdentifier(BuiltInRegistries.RECIPE_SERIALIZER.getKey(this.serializer)!!)
+            buf.writeVarInt(this.recipes.size)
+
+            @Suppress("UNCHECKED_CAST", "DEPRECATION")
+            val streamCodec = this.serializer.streamCodec() as StreamCodec<RegistryFriendlyByteBuf, Recipe<*>>
+
+            for (recipe in this.recipes) {
+                buf.writeResourceKey(recipe.id())
+                streamCodec.encode(buf, recipe.value())
             }
         }
     }
