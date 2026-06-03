@@ -33,7 +33,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:$mcVersion.build.+")
     paperweight.paperDevBundle("$mcVersion.build.+")
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 }
 
 java {
