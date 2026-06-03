@@ -2,6 +2,7 @@ package org.xodium.illyriabridge
 
 import org.bukkit.plugin.java.JavaPlugin
 import org.xodium.illyriabridge.managers.RecipeManager
+import org.xodium.illyriabridge.managers.XaeroMapManager
 
 /** Main class of the plugin. */
 class IllyriaBridge : JavaPlugin() {
@@ -19,7 +20,13 @@ class IllyriaBridge : JavaPlugin() {
         if (!server.version.contains(pluginMeta.version.substringBefore("+"))) disablePlugin(unsupportedVersionMsg)
 
         server.pluginManager.registerEvents(RecipeManager, this)
+        server.pluginManager.registerEvents(XaeroMapManager, this)
+
         server.messenger.registerOutgoingPluginChannel(this, "fabric:recipe_sync")
+    }
+
+    override fun onDisable() {
+        server.messenger.unregisterOutgoingPluginChannel(this)
     }
 
     /**
