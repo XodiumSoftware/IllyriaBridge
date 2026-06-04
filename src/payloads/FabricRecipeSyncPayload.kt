@@ -35,12 +35,14 @@ internal data class FabricRecipeSyncPayload(
     ) {
         companion object {
             /** Stream codec for encoding/decoding Entry instances */
-            val CODEC: StreamCodec<RegistryFriendlyByteBuf, Entry> =
-                StreamCodec.ofMember(
-                    Entry::write,
-                    Entry::read,
-                )
+            val CODEC: StreamCodec<RegistryFriendlyByteBuf, Entry> = StreamCodec.ofMember(Entry::write, Entry::read)
 
+            /**
+             * Reads an Entry from the given buffer.
+             *
+             * @param buf The buffer to read from
+             * @return The decoded Entry
+             */
             private fun read(buf: RegistryFriendlyByteBuf): Entry {
                 val recipeSerializerId = buf.readIdentifier()
                 val recipeSerializer =
@@ -66,6 +68,11 @@ internal data class FabricRecipeSyncPayload(
             }
         }
 
+        /**
+         * Writes this Entry to the given buffer.
+         *
+         * @param buf The buffer to write to
+         */
         private fun write(buf: RegistryFriendlyByteBuf) {
             buf.writeIdentifier(BuiltInRegistries.RECIPE_SERIALIZER.getKey(this.serializer)!!)
             buf.writeVarInt(this.recipes.size)

@@ -12,15 +12,24 @@ import net.minecraft.world.item.crafting.RecipeMap
 import net.minecraft.world.item.crafting.RecipeSerializer
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.xodium.illyriabridge.IllyriaBridge.Companion.instance
 import org.xodium.illyriabridge.payloads.FabricRecipeSyncPayload
+import kotlin.time.measureTime
 
 /**
  * Manages recipe synchronization for Fabric clients connecting to the server.
  * Listens for player join events and sends appropriate recipe data to Fabric clients.
  */
-object RecipeManager : Listener {
+internal object RecipeManager : ManagerInterface {
+    private const val RECIPE_CHANNEL = "fabric:recipe_sync"
+
+    override fun register(): Long =
+        super.register() +
+            measureTime {
+                instance.server.messenger.registerOutgoingPluginChannel(instance, RECIPE_CHANNEL)
+            }.inWholeMilliseconds
+
     /**
      * Handles player join events by checking the client brand and sending
      * Fabric-compatible recipe sync payloads if the client is running Fabric.

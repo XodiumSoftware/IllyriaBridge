@@ -5,7 +5,7 @@ import org.xodium.illyriabridge.managers.RecipeManager
 import org.xodium.illyriabridge.managers.XaeroMapManager
 
 /** Main class of the plugin. */
-class IllyriaBridge : JavaPlugin() {
+internal class IllyriaBridge : JavaPlugin() {
     companion object {
         lateinit var instance: IllyriaBridge
             private set
@@ -19,10 +19,15 @@ class IllyriaBridge : JavaPlugin() {
 
         if (!server.version.contains(pluginMeta.version.substringBefore("+"))) disablePlugin(unsupportedVersionMsg)
 
-        server.pluginManager.registerEvents(RecipeManager, this)
-        server.pluginManager.registerEvents(XaeroMapManager, this)
+        val managers =
+            listOf(
+                RecipeManager,
+                XaeroMapManager,
+            )
 
-        server.messenger.registerOutgoingPluginChannel(this, "fabric:recipe_sync")
+        logger.info(
+            "Registered: ${managers.size} manager(s) | Took ${managers.sumOf { it.register() }}ms",
+        )
     }
 
     override fun onDisable() {
