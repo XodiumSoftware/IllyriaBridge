@@ -1,8 +1,8 @@
 package org.xodium.illyriabridge
 
 import org.bukkit.plugin.java.JavaPlugin
-import org.xodium.illyriabridge.managers.RecipeManager
-import org.xodium.illyriabridge.managers.XaeroMapManager
+import org.xodium.illyriabridge.bridges.FabricRecipeBridge
+import org.xodium.illyriabridge.bridges.XaeroMapBridge
 
 /** Main class of the plugin. */
 internal class IllyriaBridge : JavaPlugin() {
@@ -19,14 +19,14 @@ internal class IllyriaBridge : JavaPlugin() {
 
         if (!server.version.contains(pluginMeta.version.substringBefore("+"))) disablePlugin(unsupportedVersionMsg)
 
-        val managers =
+        val bridges =
             listOf(
-                RecipeManager,
-                XaeroMapManager,
+                FabricRecipeBridge,
+                XaeroMapBridge,
             )
 
         logger.info(
-            "Registered: ${managers.size} manager(s) | Took ${managers.sumOf { it.register() }}ms",
+            "Registered: ${bridges.size} bridge(s) | Took ${bridges.sumOf { it.register() }}ms",
         )
     }
 

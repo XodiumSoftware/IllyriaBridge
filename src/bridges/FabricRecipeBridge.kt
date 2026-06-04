@@ -1,4 +1,4 @@
-package org.xodium.illyriabridge.managers
+package org.xodium.illyriabridge.bridges
 
 import io.netty.buffer.Unpooled
 import net.minecraft.core.registries.BuiltInRegistries
@@ -21,7 +21,7 @@ import kotlin.time.measureTime
  * Manages recipe synchronization for Fabric clients connecting to the server.
  * Listens for player join events and sends appropriate recipe data to Fabric clients.
  */
-internal object RecipeManager : ManagerInterface {
+internal object FabricRecipeBridge : BridgeInterface {
     private const val RECIPE_CHANNEL = "fabric:recipe_sync"
 
     override fun register(): Long =
