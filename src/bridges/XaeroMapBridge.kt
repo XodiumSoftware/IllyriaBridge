@@ -1,4 +1,4 @@
-package org.xodium.illyriabridge.managers
+package org.xodium.illyriabridge.bridges
 
 import com.google.common.io.ByteStreams
 import org.bukkit.entity.Player
@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerRegisterChannelEvent
 import org.xodium.illyriabridge.IllyriaBridge.Companion.instance
-import org.xodium.illyriabridge.managers.XaeroMapManager.idPath
+import org.xodium.illyriabridge.bridges.XaeroMapBridge.idPath
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -18,7 +18,7 @@ import kotlin.time.measureTime
  * Manages Xaero's WorldMap and Minimap plugin channel synchronization.
  * Ensures Fabric clients receive the correct server-level world ID for map consistency.
  */
-internal object XaeroMapManager : ManagerInterface {
+internal object XaeroMapBridge : BridgeInterface {
     private const val WORLDMAP_CHANNEL = "xaeroworldmap:main"
     private const val MINIMAP_CHANNEL = "xaerominimap:main"
 

@@ -16,8 +16,9 @@ IllyriaBridge/
 ├── build.gradle.kts         # Build configuration
 ├── src/                     # Source directory
 │   ├── IllyriaBridge.java              # Main plugin class (no package)
-│   ├── managers/
-│   │   └── RecipeManager.java          # Recipe sync handler
+│   ├── bridges/
+│   │   ├── FabricBridge.kt           # Fabric sync handler
+│   │   └── XaeroMapBridge.kt         # Xaero map sync handler
 │   └── payloads/                       # Payload classes
 │       └── FabricRecipeSyncPayload.java
 └── docs/                    # Generated documentation
@@ -48,12 +49,12 @@ There are no automated tests in this project.
 
 - **`IllyriaBridge`** — `JavaPlugin` implementation (default package). On enable:
     - Stores plugin instance in static `Plugin` field
-    - Registers `RecipeManager` as event listener
-    - Registers outgoing plugin channel for Fabric (`fabric:recipe_sync`)
+    - Registers `FabricBridge` as event listener
+        - Registers outgoing plugin channel for Fabric (`fabric:recipe_sync`)
 
 ### Recipe Sync System
 
-**RecipeManager** (in `managers` package) implements `Listener` and handles `PlayerJoinEvent`:
+**FabricBridge** (in `bridges` package) implements `Listener` and handles `PlayerJoinEvent`:
 
 1. Detects Fabric client via `Player.getClientBrandName()`
 2. For Fabric clients: calls `sendFabricPayload()`
@@ -77,7 +78,8 @@ There are no automated tests in this project.
 | Package     | Contents                                       |
 |-------------|------------------------------------------------|
 | (default)   | `IllyriaBridge` — Main plugin class            |
-| `managers/` | `RecipeManager` — Recipe sync handler          |
+| `bridges/`  | `FabricBridge` — Fabric sync handler           |
+| `bridges/`  | `XaeroMapBridge` — Xaero map sync handler      |
 | `payloads/` | `FabricRecipeSyncPayload` — Fabric recipe sync |
 
 ### Key Conventions
