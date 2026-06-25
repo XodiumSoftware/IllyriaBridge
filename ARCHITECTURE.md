@@ -4,7 +4,7 @@ This file provides guidance when working with code in this repository.
 
 ## Project Overview
 
-IllyriaBridge is a single-module Paper Minecraft plugin (1.21.11) that syncs server-side recipes to JEI (Just Enough Items) on Fabric and NeoForge clients.
+IllyriaBridge is a single-module Paper Minecraft plugin that syncs server-side recipes to JEI (Just Enough Items) on Fabric and NeoForge clients.
 
 Built with Java + Gradle, targeting Java 25. Uses the Paper API's plugin messaging channels to send recipe data to modded clients.
 
