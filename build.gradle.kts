@@ -29,7 +29,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:$mcVersion.build.+")
     paperweight.paperDevBundle("$mcVersion.build.+")
     implementation(kotlin("stdlib"))
 }

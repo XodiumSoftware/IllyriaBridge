@@ -1,6 +1,7 @@
 package org.xodium.illyriabridge
 
 import org.bukkit.plugin.java.JavaPlugin
+import org.xodium.illyriabridge.bridges.BridgeInterface
 import org.xodium.illyriabridge.bridges.FabricRecipeBridge
 import org.xodium.illyriabridge.bridges.XaeroMapBridge
 
@@ -11,15 +12,18 @@ internal class IllyriaBridge : JavaPlugin() {
             private set
     }
 
+    lateinit var bridges: List<BridgeInterface>
+        private set
+
     override fun onEnable() {
         instance = this
 
-        val unsupportedVersionMsg =
-            "This plugin requires a supported server version. Supported versions: ${pluginMeta.version}."
+        if (!server.version.contains(pluginMeta.version.substringBefore("+"))) {
+            logger.severe("This plugin requires the following supported version: ${pluginMeta.version}.")
+            server.pluginManager.disablePlugin(this)
+        }
 
-        if (!server.version.contains(pluginMeta.version.substringBefore("+"))) disablePlugin(unsupportedVersionMsg)
-
-        val bridges =
+        bridges =
             listOf(
                 FabricRecipeBridge,
                 XaeroMapBridge,
@@ -32,16 +36,5 @@ internal class IllyriaBridge : JavaPlugin() {
 
     override fun onDisable() {
         server.messenger.unregisterOutgoingPluginChannel(this)
-    }
-
-    /**
-     * Disable the plugin and log the message.
-     *
-     * @param msg The message to log.
-     */
-    private fun disablePlugin(msg: String): Nothing {
-        logger.severe(msg)
-        server.pluginManager.disablePlugin(instance)
-        throw IllegalStateException(msg)
     }
 }
