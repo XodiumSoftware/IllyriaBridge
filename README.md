@@ -23,7 +23,6 @@
 
 ## Table of Contents
 
-- [Architecture][architecture_url]
 - [Guide](GUIDE.md)
 - [Built With](#built-with)
 - [Code of Conduct][code_of_conduct_url]
@@ -48,7 +47,7 @@
 
 <p align="right"><a href="#readme-top">▲</a></p>
 
-[architecture_url]: https://github.com/XodiumSoftware/IllyriaBridge/blob/main/ARCHITECTURE.md
+
 
 [docs_shield_url]: https://img.shields.io/badge/Docs-Click%20Me!-blue.svg?style=for-the-badge
 
