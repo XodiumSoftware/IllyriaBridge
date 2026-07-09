@@ -4,26 +4,30 @@
 
 - **Name:** IllyriaBridge
 - **Type:** Single-module Minecraft Paper plugin project (server-side only)
-- **MC Version:** 1.21.11 (Paper 1.21.11)
-- **Language:** Java (JVM 25)
+- **MC Version:** 26.2 (Paper 26.2)
+- **Language:** Kotlin (JVM 25)
 - **Build Tool:** Gradle with Kotlin DSL
 
 ## APIs & Tools
 
 | Category           | Technology                               | Purpose                       |
 |--------------------|------------------------------------------|-------------------------------|
-| **Core API**       | [Paper API](https://papermc.io/) 1.21.11 | Minecraft server plugin API   |
-| **Language**       | Java 25                                  | JVM language                  |
+| **Core API**       | [Paper API](https://papermc.io/) 26.2    | Minecraft server plugin API   |
+| **Language**       | Kotlin 2.4.0 / Java 25                   | JVM language                  |
 | **Build Tool**     | Gradle (Kotlin DSL)                      | Build automation              |
-| **Gradle Plugins** | run-paper 3.0.2                          | Local test server             |
+| **Gradle Plugins** | paperweight userdev 2.0.0-beta.21        | Paper development environment |
+|                    | shadow 9.5.1                             | Fat JAR creation              |
+|                    | run-paper 3.0.2                          | Local test server             |
 |                    | resource-factory 1.3.1                   | `paper-plugin.yml` generation |
+|                    | dokka 2.2.0                              | Documentation generation      |
+|                    | ktlint 14.2.0                            | Kotlin linting                |
 |                    | foojay-resolver 1.0.0                    | Auto-download JVM toolchains  |
 | **Code Style**     | .editorconfig                            | IDE-agnostic formatting rules |
 
 ### Paper API Resources
 
 - **Documentation**: https://docs.papermc.io/paper/dev/
-- **JavaDoc**: https://jd.papermc.io/paper/1.21.11/ (matches project version)
+- **JavaDoc**: https://jd.papermc.io/paper/26.2/ (matches project version)
 
 ## Quick Commands
 
@@ -31,71 +35,89 @@
 # Build the plugin
 ./gradlew shadowJar
 
-# Run local test server (auto-downloads Paper 1.21.11)
+# Run local test server (auto-downloads Paper 26.2)
 ./gradlew runServer
 
 # Build only (no shadow)
 ./gradlew build
+
+# Run Kotlin linting
+./gradlew ktlintCheck
+
+# Generate Dokka documentation
+./gradlew dokkaGenerateHtml
 ```
 
 ## Project Structure
 
 ```
 IllyriaBridge/
-├── build.gradle.kts          # Build configuration
-├── settings.gradle.kts         # Project settings
-├── src/                        # Source directory
-│   ├── IllyriaBridge.java              # Main plugin class (no package)
+├── build.gradle.kts                    # Build configuration
+├── settings.gradle.kts                 # Project settings
+├── gradle.properties                   # Gradle properties
+├── src/                                # Source directory
+│   ├── IllyriaBridge.kt                # Main plugin class
 │   ├── bridges/
-│   │   ├── FabricBridge.kt           # Fabric sync handler
-│   │   └── XaeroMapBridge.kt         # Xaero map sync handler
-│   └── payloads/                         # Payload classes
-│       └── FabricRecipeSyncPayload.java
-└── docs/                       # Generated documentation
+│   │   ├── BridgeInterface.kt          # Bridge contract
+│   │   ├── FabricRecipeBridge.kt       # Fabric recipe sync handler
+│   │   └── XaeroMapBridge.kt           # Xaero map sync handler
+│   └── payloads/                       # Payload classes
+│       └── FabricRecipeSyncPayload.kt  # Fabric recipe sync payload
+├── docs/                               # Generated Dokka documentation
+└── .github/workflows/                  # CI/CD workflows
 ```
 
 ## Architecture
 
 ### Entry Point
 
-**IllyriaBridge** (`JavaPlugin`) — Main class. On enable:
+**IllyriaBridge** (`JavaPlugin`) — Main class in package `org.xodium.illyriabridge`. On enable:
 
-- Registers plugin channel for Fabric (`fabric:recipe_sync`)
-- Registers the FabricBridge event listener
+- Validates the server version against the plugin's supported version
+- Instantiates all bridges implementing `BridgeInterface`
+- Registers each bridge and logs total registration time
+- On disable: unregisters outgoing plugin channels
 
-### Recipe Sync System
+### Bridge System
 
-**FabricBridge** (in `bridges` package) implements `Listener` and handles `PlayerJoinEvent`:
+**BridgeInterface** — Common contract for all bridges:
 
-1. Detects Fabric client via `Player.getClientBrandName()`
-2. For Fabric clients: calls `sendFabricPayload()`
+- Extends Bukkit `Listener`
+- Provides a `register()` method that registers event listeners and returns timing in milliseconds
 
-**Fabric Sync:**
+**FabricRecipeBridge** (`bridges` package):
 
-- Creates `FabricRecipeSyncPayload` (from `payloads` package) with recipe entries grouped by `RecipeSerializer`
-- Encodes to `RegistryFriendlyByteBuf` using `Entry.CODEC`
-- Sends via `ClientboundCustomPayloadPacket` with ID `fabric:recipe_sync`
+- Handles `PlayerJoinEvent`
+- Detects Fabric clients via `Player.getClientBrandName()`
+- Registers outgoing plugin channel `fabric:recipe_sync`
+- For Fabric clients: groups recipes by `RecipeSerializer`, encodes via `FabricRecipeSyncPayload.CODEC`, and sends a `ClientboundCustomPayloadPacket`
+
+**XaeroMapBridge** (`bridges` package):
+
+- Registers outgoing plugin channels `xaeroworldmap:main` and `xaerominimap:main`
+- Handles `PlayerRegisterChannelEvent` and `PlayerChangedWorldEvent`
+- Sends a persistent server world ID to Xaero map clients from `xaeromap.id`
 
 ### Package Structure
 
-| Package     | Contents                                       |
-|-------------|------------------------------------------------|
-| (default)   | `IllyriaBridge` — Main plugin class            |
-| `bridges/`  | `FabricBridge` — Fabric sync handler           |
-| `bridges/`  | `XaeroMapBridge` — Xaero map sync handler      |
-| `payloads/` | `FabricRecipeSyncPayload` — Fabric recipe sync |
+| Package                          | Contents                                                         |
+|----------------------------------|------------------------------------------------------------------|
+| `org.xodium.illyriabridge`       | `IllyriaBridge` — Main plugin class                              |
+| `org.xodium.illyriabridge.bridges` | `BridgeInterface`, `FabricRecipeBridge`, `XaeroMapBridge`       |
+| `org.xodium.illyriabridge.payloads` | `FabricRecipeSyncPayload` — Fabric recipe sync payload         |
 
 ### Key Conventions
 
-- All internal classes use appropriate visibility (`public`/`private`)
-- Plugin uses Paper's plugin channel API for cross-platform mod compatibility
+- All internal classes use appropriate visibility (`public`/`internal`/`private`)
+- Plugin uses Paper's plugin channel API and NMS packets for cross-platform mod compatibility
 - Recipe data is encoded using Minecraft's `RegistryFriendlyByteBuf`
+- Bridges are singleton objects implementing `BridgeInterface`
 
 ## CI/CD
 
 GitHub Actions workflows in `.github/workflows/`:
 
-- **kotlin.yml** — Builds shadow JAR on push/PR, uploads artifacts, creates nightly release
+- **kotlin.yml** — Runs `ktlintCheck`, builds shadow JAR, uploads artifacts, creates nightly release, and publishes Dokka docs to GitHub Pages on `main`
 - **enforce_pr_title.yml** — Validates PR titles follow conventional commits
 
 ## Claude Code Workflow
