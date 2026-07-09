@@ -23,7 +23,6 @@
 
 ## Table of Contents
 
-
 - [Guide](GUIDE.md)
 - [Built With](#built-with)
 - [Code of Conduct][code_of_conduct_url]
@@ -34,7 +33,7 @@
 
 ## Requirements
 
-- [Paper](https://papermc.io/) 26.1
+- [Paper](https://papermc.io/) 26.2
 - Java 25
 
 <p align="right"><a href="#readme-top">▲</a></p>

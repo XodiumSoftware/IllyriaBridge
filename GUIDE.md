@@ -13,8 +13,8 @@
 
 ## Prerequisites
 
-- [Paper](https://papermc.io/) Minecraft server 1.21.11
-- Java 21 or newer
+- [Paper](https://papermc.io/) Minecraft server 26.2
+- Java 25 or newer
 
 ## Download Nightly Build
 
@@ -64,7 +64,7 @@ To quickly test the plugin:
 ./gradlew runServer
 ```
 
-This automatically downloads Paper 1.21.11 and starts a local test server with the plugin.
+This automatically downloads Paper 26.2 and starts a local test server with the plugin.
 
 ## Installation
 
@@ -93,7 +93,7 @@ For players to see synced recipes, they need:
 
 ### "Plugin disabled itself"
 
-- Verify server version is Paper 1.21.11
+- Verify server version is Paper 26.2
 - Check console for version mismatch errors
 - Update your server or use a compatible plugin version
 
@@ -111,7 +111,7 @@ For players to see synced recipes, they need:
 
 ### Build fails
 
-- Verify Java 21 is installed and active:
+- Verify Java 25 is installed and active:
   ```bash
   java -version
   ```
