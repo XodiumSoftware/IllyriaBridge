@@ -45,7 +45,6 @@ jobs:
 
   build:
     name: Build
-    needs: [ lint ]
     runs-on: ubuntu-latest
     environment:
       name: "${{ github.ref_name }}"
@@ -69,10 +68,6 @@ jobs:
         name: Setup Gradle
         uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92
 
-      - id: clean_gradle
-        name: Clean Build Directory
-        run: ./gradlew clean
-
       - id: build
         name: Build Plugin
         run: ./gradlew shadowJar
@@ -92,7 +87,7 @@ jobs:
 
   nightly_release:
     name: Nightly Release
-    needs: [ build ]
+    needs: [ lint, build ]
     runs-on: ubuntu-latest
     environment:
       name: "${{ github.ref_name }}"
@@ -160,7 +155,6 @@ jobs:
 
   docs:
     name: Documentation
-    needs: [ lint ]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment:
