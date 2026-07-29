@@ -6,7 +6,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerRegisterChannelEvent
 import org.xodium.illyriabridge.IllyriaBridge.Companion.instance
-import org.xodium.illyriabridge.bridges.XaeroMapBridge.idPath
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -85,8 +84,8 @@ internal object XaeroMapBridge : BridgeInterface {
 
     /**
      * Loads the server world ID from disk, creating it if necessary.
-     * If [idPath] exists, its content is parsed as an integer and returned.
-     * Otherwise, a new random ID is generated, persisted, and returned.
+     * If [idPath] exists, its content is parsed as a positive integer and returned.
+     * Otherwise, a new random positive ID is generated, persisted, and returned.
      *
      * @return The loaded or created world ID, or `0` on failure
      */
@@ -94,15 +93,25 @@ internal object XaeroMapBridge : BridgeInterface {
         runCatching {
             when {
                 idPath.exists() -> {
-                    idPath.readText().trim().toInt()
+                    idPath
+                        .readText()
+                        .trim()
+                        .toInt()
+                        .takeIf { it > 0 }
+                        ?: generateAndPersistId()
                 }
-
-                else -> {
-                    Random.nextInt().also {
-                        idPath.parent.createDirectories()
-                        idPath.writeText(it.toString())
-                    }
-                }
+                else -> generateAndPersistId()
             }
         }.onFailure { instance.logger.severe("Error loading $idPath: ${it.message}") }.getOrDefault(0)
+
+    /**
+     * Generates a new positive random world ID and persists it to [idPath].
+     *
+     * @return The generated world ID
+     */
+    private fun generateAndPersistId(): Int =
+        Random.nextInt(1, Int.MAX_VALUE).also {
+            idPath.parent.createDirectories()
+            idPath.writeText(it.toString())
+        }
 }
