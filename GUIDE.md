@@ -78,7 +78,7 @@ IllyriaBridge requires **no configuration** — it works out of the box.
 
 The plugin automatically:
 
-- Detects Fabric and NeoForge clients via their client brand
+- Detects Fabric clients via their client brand
 - Syncs server recipes to JEI when players join
 - Uses vanilla plugin channels (no additional setup required)
 
@@ -87,7 +87,6 @@ The plugin automatically:
 For players to see synced recipes, they need:
 
 - **Fabric clients:** JEI mod installed
-- **NeoForge clients:** JEI mod installed
 
 ## Troubleshooting
 
@@ -100,7 +99,7 @@ For players to see synced recipes, they need:
 ### "Recipes not showing in JEI"
 
 - Ensure players have JEI installed on their client
-- Verify client is Fabric or NeoForge (not vanilla)
+- Verify client is Fabric (not vanilla)
 - Check console for payload encoding errors
 
 ### "Unknown client brand"
