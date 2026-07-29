@@ -120,6 +120,8 @@ GitHub Actions workflows in `.github/workflows/`:
 - **kotlin.yml** — Runs `ktlintCheck`, builds shadow JAR, uploads artifacts, creates nightly release, and publishes Dokka docs to GitHub Pages on `main`
 - **enforce_pr_title.yml** — Validates PR titles follow conventional commits
 
+> **Note:** GitHub Action dependency versions are managed automatically by Renovate. Do not manually bump action versions unless Renovate is unavailable.
+
 ## Claude Code Workflow
 
 ### Task Management
